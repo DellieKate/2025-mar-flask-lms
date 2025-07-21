@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from init import db
 from models.student import Student, students_schema, student_schema
 
@@ -20,6 +20,7 @@ def get_students():
     else:
         return {"message": "No student records found."}, 404
     
+    
 @student_bp.route("/<int:student_id>")
 def get_a_student(student_id):
     stmt = db.select(Student).where(Student.id == student_id)
@@ -32,5 +33,17 @@ def get_a_student(student_id):
         return {"message": f"Student with id {student_id} does not exist."}, 404
                                     
 
-
+@student_bp.route("/", methods=["POST"])
+def create_a_student():
+    body_data = request.get_json()
+    new_student = Student(
+        name = body_data.get("name"),
+        email = body_data.get("email"),
+        address = body_data.get("address")
+    )
+    db.session.add(new_student)
+    db.session.commit()
+    
+    data = student_schema.dump(new_student)
+    return jsonify(data), 201
 
