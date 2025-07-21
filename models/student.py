@@ -17,4 +17,3 @@ student_schema = StudentSchema()
 
 students_schema = StudentSchema(many=True)
 
-    
