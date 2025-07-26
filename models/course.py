@@ -8,7 +8,13 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable = False, unique=True)
     duration = db.Column(db.Float)
+    
+    #one to many relationship
+    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.id"))
 
+    teacher = db.relationship("Teacher", back_populate="courses")
+    
+    
 class CourseSchema(db.Schema):
     name = fields.String(required=True, validate=And(
       Length(min=2, error="Course names must be at least 2 characters long.")
@@ -16,6 +22,8 @@ class CourseSchema(db.Schema):
     ))
     
     duration = fields.Float(allow_nan=False, required=False)
+    
+    teacher = fields.Nested("TeacherSchema", only=["name", "department"])
     
     class Meta:
         fields = ("id", "name", "duration")
