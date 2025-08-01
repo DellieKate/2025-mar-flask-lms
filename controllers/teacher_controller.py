@@ -9,13 +9,16 @@ from schemas.schemas import teachers_schema, teacher_schema
 teacher_bp = Blueprint("teacher", __name__, url_prefix="/teachers")
 
 #Routes
+# GET / teachers/
 @teacher_bp.route("/")
 def get_teachers():
     department = request.args.get("department")
     if department:
-        stmt = db.select(Teacher).where(Teacher.department == department)
+        stmt = db.select(Teacher).where(Teacher.department == department).order_by(Teacher.id)
     else:
-        stmt = db.select(Teacher)
+        # Define the GET statement
+        # SELECT * FROM teacher;
+        stmt = db.select(Teacher).order_by(Teacher.id)
         
     teachers_list = db.session.scalars(stmt) #Python object
     data = teachers_schema.dump(teachers_list) #JavaScript JSON object
