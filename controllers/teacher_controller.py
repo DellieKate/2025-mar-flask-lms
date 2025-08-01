@@ -11,7 +11,12 @@ teacher_bp = Blueprint("teacher", __name__, url_prefix="/teachers")
 #Routes
 @teacher_bp.route("/")
 def get_teachers():
-    stmt = db.select(Teacher)
+    department = request.args.get("department")
+    if department:
+        stmt = db.select(Teacher).where(Teacher.department == department)
+    else:
+        stmt = db.select(Teacher)
+        
     teachers_list = db.session.scalars(stmt) #Python object
     data = teachers_schema.dump(teachers_list) #JavaScript JSON object
     
