@@ -31,6 +31,7 @@ class CourseSchema(SQLAlchemyAutoSchema):
         include_fk = True
         include_relationship = True
         fields = ("id", "name", "duration", "teacher")
+        ordered = True
         
     # name = fields.String(required=True, validate=And(
     #   Length(min=2, error="Course names must be at least 2 characters long."),
