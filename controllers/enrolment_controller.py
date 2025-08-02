@@ -12,12 +12,14 @@ enrolment_bp = Blueprint("enrolment", __name__, url_prefix="/enrolments")
 # GET /enrolments/
 @enrolment_bp.route("/")
 def get_enrolments():
+    # Adding search with query parameters
     course_id = request.args.get("course_id", type=int)
     student_id = request.args.get("student_id", type=int)
     # Define the GET statement
     # SELECT * FROM enrolment;
     stmt = db.select(Enrolment)
 
+    # benefit of 2 ifs = will run both conditions
     if course_id:
         stmt = stmt.where(Enrolment.course_id == course_id)
     if student_id:
@@ -101,8 +103,8 @@ def delete_enrolment(enrolment_id):
         return {"message": f"Enrolment with id '{enrolment_id}' does not exist"}, 404
     
 # UPDATE /enrolments/id
-# @enrolment_bp.route("/<int:enrolment_id>", methods=["PUT", "PATCH"])
-# def update_enrolment(enrolment_id):
+@enrolment_bp.route("/<int:enrolment_id>", methods=["PUT", "PATCH"])
+def update_enrolment(enrolment_id):
     # Get the enrolment with id
     stmt = db.select(Enrolment).where(Enrolment.id == enrolment_id)
     enrolment = db.session.scalar(stmt)

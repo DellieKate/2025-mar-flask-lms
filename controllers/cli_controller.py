@@ -72,16 +72,16 @@ def seed_tables():
     
     enrolments = [
         Enrolment(
-           student_id = students[0].id,
-           course_id = courses[0].id
+           student = students[0],
+           course = courses[0]
            ),
         Enrolment(
-            student_id = students[0].id,
-            course_id = courses[1].id
+            student = students[0],
+            course= courses[1]
            ),
         Enrolment(
-            student_id  = students[1].id,
-            course_id = courses[0].id,
+            student = students[1],
+            course = courses[0],
             enrolment_date = "2025-01-29"
         )
     ]
