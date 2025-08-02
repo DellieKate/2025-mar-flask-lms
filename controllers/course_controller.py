@@ -8,8 +8,12 @@ from schemas.schemas import courses_schema, course_schema
 
 course_bp = Blueprint ("course", __name__, url_prefix="/courses")
 
+# Routes
+# GET / courses/
 @course_bp.route("/")
 def get_courses():
+    #Define the GET statement
+    # SELECT * FORM course
     stmt = db.select(Course)
     courses_list = db.session.scalars(stmt) #Python object
     data = courses_schema.dump(courses_list) #JavaScript JSON object
@@ -30,15 +34,19 @@ def get_courses():
     else:
         return {"message": "No course records found."}, 404
     
-    
+
+# GET /id
 @course_bp.route("/<int:course_id>")
 def get_a_course(course_id):
+     # Define a statement
     stmt = db.select(Course).where(Course.id == course_id)
+    # Execute it
     course = db.session.scalar(stmt)
     
     if course:
-        #serialise it
+        # Serialise it
         data = course_schema.dump(course)
+        # Return the data
         return jsonify(data)
     else: 
         return {"message": f"Course with id {course_id} does not exist."}, 404
@@ -63,7 +71,6 @@ def create_a_course():
         # commit the session
         db.session.commit()
         
-        
         return jsonify(course_schema.dump(new_course)), 201
     
     except IntegrityError as err:
@@ -87,21 +94,24 @@ def delete_course(course_id):
     else:
         return {"message": f"Course with id '{course_id}' does not exist"}, 404
 
-
+# UPDATE /course/id
 @course_bp.route("/<int:course_id>", methods=["PUT", "PATCH"])
 def update_course(course_id):
     try:
+        #Get the course with id
         stmt = db.select(Course).where(Course.id == course_id)
         course = db.session.scalar(stmt)
+        #if exists
         if course:
-            # get the course with id
+            # get the data to be updated
             body_data = request.get_json()
+            #make changes
             course.name = body_data.get("name") or course.name
             course.duration = body_data.get("duration") or course.duration
             course.teacher_id = body_data.get("teacher_id") or course.teacher_id
-        
+            # commit
             db.session.commit()
-            
+            # return
             return jsonify(course_schema.dump(course))
         
         else:

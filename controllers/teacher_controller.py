@@ -8,7 +8,7 @@ from schemas.schemas import teachers_schema, teacher_schema
 
 teacher_bp = Blueprint("teacher", __name__, url_prefix="/teachers")
 
-#Routes
+# Routes
 # GET / teachers/
 @teacher_bp.route("/")
 def get_teachers():

@@ -11,7 +11,7 @@ class Course(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.id"))
 
     teacher = db.relationship("Teacher", back_populates="courses")
-    enrolments = db.relationship("Enrolments", back_populates = "student", cascade="all, delete")
+    enrolments = db.relationship("Enrolment", back_populates = "course", cascade="all, delete")
     
     
     

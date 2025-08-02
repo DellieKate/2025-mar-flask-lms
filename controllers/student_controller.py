@@ -4,7 +4,7 @@ from psycopg2 import errorcodes
 
 from init import db
 from models.student import Student
-from schemas.schemas import students_schema, student_schema
+from schemas.schemas import student_schema, students_schema
 
 student_bp = Blueprint("student", __name__, url_prefix="/students")
 
@@ -30,7 +30,7 @@ def get_students():
     else:
         return {"message": "No student records found."}, 404
     
-    
+# GET /id
 @student_bp.route("/<int:student_id>")
 def get_a_student(student_id):
     stmt = db.select(Student).where(Student.id == student_id)
@@ -43,7 +43,7 @@ def get_a_student(student_id):
     else: 
         return {"message": f"Student with id {student_id} does not exist."}, 404
                                     
-
+# POST
 @student_bp.route("/", methods=["POST"])
 def create_a_student():
     try:
@@ -66,7 +66,8 @@ def create_a_student():
             return {"message": "Email has to be unique."}, 400
         else:    
             return {"message": "Unexpected error occured."}, 400
-        
+ 
+# DELETE /id      
 @student_bp.route("/<int:student_id>", methods=["DELETE"])
 def delete_student(student_id):
     stmt = db.select(Student).where(Student.id == student_id)
@@ -80,7 +81,7 @@ def delete_student(student_id):
     else:
         return {"message": f"Student with id '{student_id}' does not exist"}, 404
 
-
+# UPDATE /students/id
 @student_bp.route("/<int:student_id>", methods=["PUT", "PATCH"])
 def update_student(student_id):
     stmt = db.select(Student).where(Student.id == student_id)
