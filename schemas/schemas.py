@@ -6,11 +6,16 @@ from marshmallow.validate import Length, And, Regexp
 from models.student import Student
 from models.teacher import Teacher
 from models.course import Course
+from models.enrolment import Enrolment
 
 class StudentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Student
         load_instance = True
+        include_relationships = True
+    
+    #needs to in a list since a student can have multiple enrolments
+    enrolments = fields.List(fields.Nested("EnrolmentSchema", exclude=("student",)))
         
 
 class TeacherSchema(SQLAlchemyAutoSchema):
@@ -41,17 +46,30 @@ class CourseSchema(SQLAlchemyAutoSchema):
     # duration = fields.Float(allow_nan=False, required=False)
     
     teacher = fields.Nested("TeacherSchema", only=("id","name", "department"))
+    enrolments = fields.List(fields.Nested("EnrolmentSchema", exclude=("course",)))
+    
+class EnrolmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Enrolment
+        load_instance = True
+        include_relationships = True
+        include_fk = True
         
+    student = fields.Nested("StudentSchema", only=("id", "name"))
+    course = fields.Nested("CourseSchema", only=("id", "name", "duration"))
 
+
+#Student Schema for converting a single entry
 student_schema = StudentSchema()
-
+#Student Schema for converting multiple entries
 students_schema = StudentSchema(many=True)
      
 teacher_schema = TeacherSchema()
-
 teachers_schema = TeacherSchema(many=True)
 
 course_schema = CourseSchema()
-
 courses_schema = CourseSchema(many=True)  
+
+enrolment_schema = EnrolmentSchema()
+enrolments_schema = EnrolmentSchema(many=True)  
 
